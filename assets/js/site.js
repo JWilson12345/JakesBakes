@@ -3,8 +3,12 @@ const SLOT_KEY = "jakesBakesCollectionSlot";
 const REVIEW_KEY = "jakesBakesReviews";
 const EMAIL_OUTBOX_KEY = "jakesBakesEmailOutbox";
 const EMAILJS_SRC = "https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js";
+const SUPABASE_SRC = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
 const REVIEW_ADMIN_CODE = "1234";
 let emailJsLoader;
+let supabaseLoader;
+let supabaseClientInstance;
+let remoteReviews = null;
 
 function money(value) {
   return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(value);
@@ -27,6 +31,11 @@ function safeJson(key, fallback) {
   }
 }
 
+function uniqueId() {
+  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
 function loadEmailJs() {
   if (window.emailjs) return Promise.resolve(window.emailjs);
   if (emailJsLoader) return emailJsLoader;
@@ -39,6 +48,38 @@ function loadEmailJs() {
     document.head.append(script);
   });
   return emailJsLoader;
+}
+
+function supabaseConfig() {
+  return STORE_CONFIG.supabase || {};
+}
+
+function hasSupabaseConfig() {
+  const config = supabaseConfig();
+  return Boolean(config.url && config.anonKey && config.reviewsTable);
+}
+
+function loadSupabase() {
+  if (window.supabase?.createClient) return Promise.resolve(window.supabase);
+  if (supabaseLoader) return supabaseLoader;
+  supabaseLoader = new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = SUPABASE_SRC;
+    script.async = true;
+    script.onload = () => window.supabase?.createClient ? resolve(window.supabase) : reject(new Error("Supabase did not load."));
+    script.onerror = () => reject(new Error("Supabase could not be loaded."));
+    document.head.append(script);
+  });
+  return supabaseLoader;
+}
+
+async function supabaseClient() {
+  if (!hasSupabaseConfig()) return null;
+  if (supabaseClientInstance) return supabaseClientInstance;
+  const clientLibrary = await loadSupabase();
+  const config = supabaseConfig();
+  supabaseClientInstance = clientLibrary.createClient(config.url, config.anonKey);
+  return supabaseClientInstance;
 }
 
 function emailMessage(type, payload, meta) {
@@ -59,6 +100,7 @@ function emailMessage(type, payload, meta) {
       "-----",
       payload.photoAttached ? "A photo was uploaded with this review." : "No photo was uploaded.",
       payload.photoName ? `File name: ${payload.photoName}` : "",
+      payload.photoUrl ? `Photo link: ${payload.photoUrl}` : "",
       payload.emailPhoto ? "Photo preview is included in the EmailJS template variable named photo_preview." : "",
       payload.photoSendNote || "",
       "",
@@ -114,6 +156,9 @@ function emailMessage(type, payload, meta) {
 
 function emailHtmlMessage(type, payload, meta) {
   if (type !== "review") return "";
+  const photoLink = payload.photoUrl
+    ? `<p><a href="${escapeAttribute(payload.photoUrl)}" style="color:#1f5a4b">Open full review photo</a></p>`
+    : "";
   const photoHtml = payload.emailPhoto
     ? `<img src="${payload.emailPhoto}" alt="Uploaded review photo" style="display:block;max-width:260px;width:100%;height:auto;border-radius:8px;margin-top:12px;">`
     : `<p>${payload.photoAttached ? "Photo was uploaded, but the email preview could not be included." : "No photo was uploaded."}</p>`;
@@ -127,6 +172,7 @@ function emailHtmlMessage(type, payload, meta) {
       <p>${escapeHtml(payload.text)}</p>
       <h3>Photo</h3>
       <p>${payload.photoAttached ? `Photo uploaded: ${escapeHtml(payload.photoName || "review photo")}` : "No photo was uploaded."}</p>
+      ${photoLink}
       ${photoHtml}
     </div>`;
 }
@@ -164,6 +210,7 @@ const EmailService = {
         review_text: payload.text || "",
         photo_name: payload.photoName || "",
         photo_attached: payload.photoAttached ? "Yes" : "No",
+        photo_url: payload.photoUrl || "",
         photo_preview: payload.emailPhoto || "",
         photo_preview_html: payload.emailPhoto
           ? `<img src="${payload.emailPhoto}" alt="Uploaded review photo" style="display:block;max-width:260px;width:100%;height:auto;border-radius:8px;">`
@@ -281,6 +328,7 @@ function removeItem(size) {
 }
 
 function reviews() {
+  if (Array.isArray(remoteReviews)) return remoteReviews;
   return safeJson(REVIEW_KEY, []);
 }
 
@@ -291,8 +339,101 @@ function saveReview(review) {
 }
 
 function removeReview(id) {
+  if (Array.isArray(remoteReviews)) {
+    remoteReviews = remoteReviews.filter((review) => review.id !== id);
+    window.dispatchEvent(new Event("reviewschange"));
+    return;
+  }
   localStorage.setItem(REVIEW_KEY, JSON.stringify(reviews().filter((review) => review.id !== id)));
   window.dispatchEvent(new Event("reviewschange"));
+}
+
+function normalizeRemoteReview(row) {
+  return {
+    id: row.id,
+    name: row.name || "Customer",
+    rating: Number(row.rating) || 0,
+    text: row.review_text || "",
+    date: row.created_at || new Date().toISOString(),
+    photo: row.photo_url || "",
+    photoAttached: Boolean(row.photo_url),
+    photoName: row.photo_name || "",
+    source: "remote"
+  };
+}
+
+async function loadRemoteReviews() {
+  if (!hasSupabaseConfig()) return false;
+  const client = await supabaseClient();
+  const table = supabaseConfig().reviewsTable;
+  const { data, error } = await client
+    .from(table)
+    .select("id,name,rating,review_text,photo_url,photo_name,created_at")
+    .order("created_at", { ascending: false })
+    .limit(80);
+  if (error) throw error;
+  remoteReviews = (data || []).map(normalizeRemoteReview);
+  window.dispatchEvent(new Event("reviewschange"));
+  return true;
+}
+
+function dataUrlToBlob(dataUrl) {
+  const [header, content] = dataUrl.split(",");
+  const match = header.match(/data:(.*?);base64/);
+  const contentType = match ? match[1] : "image/jpeg";
+  const binary = atob(content || "");
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return new Blob([bytes], { type: contentType });
+}
+
+async function uploadReviewPhoto(review, photoDataUrl) {
+  if (!photoDataUrl || !hasSupabaseConfig()) return "";
+  const client = await supabaseClient();
+  const bucket = supabaseConfig().reviewPhotosBucket;
+  if (!bucket) return "";
+  const extension = photoDataUrl.startsWith("data:image/png") ? "png" : "jpg";
+  const path = `${review.id}/review-photo.${extension}`;
+  const { error } = await client.storage
+    .from(bucket)
+    .upload(path, dataUrlToBlob(photoDataUrl), {
+      contentType: extension === "png" ? "image/png" : "image/jpeg",
+      upsert: true
+    });
+  if (error) throw error;
+  const { data } = client.storage.from(bucket).getPublicUrl(path);
+  return data?.publicUrl || "";
+}
+
+async function saveReviewOnline(review, photoDataUrl) {
+  if (!hasSupabaseConfig()) {
+    saveReview(review);
+    return review;
+  }
+  const client = await supabaseClient();
+  const table = supabaseConfig().reviewsTable;
+  const photoUrl = review.photoUrl || await uploadReviewPhoto(review, photoDataUrl);
+  const row = {
+    id: review.id,
+    name: review.name,
+    rating: review.rating,
+    review_text: review.text,
+    photo_url: photoUrl,
+    photo_name: review.photoName,
+    created_at: review.date
+  };
+  const { data, error } = await client
+    .from(table)
+    .insert(row)
+    .select("id,name,rating,review_text,photo_url,photo_name,created_at")
+    .single();
+  if (error) throw error;
+  const saved = normalizeRemoteReview(data || row);
+  remoteReviews = [saved, ...(remoteReviews || [])].slice(0, 80);
+  window.dispatchEvent(new Event("reviewschange"));
+  return saved;
 }
 
 function boxDetails(size) {
@@ -452,9 +593,10 @@ function renderRatingBreakdown() {
 }
 
 function reviewCard(review, canManage = false) {
-  const image = review.photo ? `<img class="review-photo" src="${review.photo}" alt="Photo uploaded with ${review.name}'s review" loading="lazy">` : "";
-  const remove = canManage ? `<button class="button secondary" type="button" data-review-remove="${review.id}">Remove review</button>` : "";
-  return `<article class="card review-card">${image}<div class="stars" aria-label="${review.rating} out of 5 stars">${stars(review.rating)}</div><p>${escapeHtml(review.text)}</p><strong>- ${escapeHtml(review.name)}</strong><small>${new Date(review.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</small>${remove}</article>`;
+  const image = review.photo ? `<img class="review-photo" src="${escapeAttribute(review.photo)}" alt="Photo uploaded with ${escapeAttribute(review.name)}'s review" loading="lazy">` : "";
+  const remoteAdminNote = canManage && review.source === "remote" ? "<small>Live reviews can be removed in Supabase.</small>" : "";
+  const remove = canManage && review.source !== "remote" ? `<button class="button secondary" type="button" data-review-remove="${escapeAttribute(review.id)}">Remove review</button>` : "";
+  return `<article class="card review-card">${image}<div class="stars" aria-label="${review.rating} out of 5 stars">${stars(review.rating)}</div><p>${escapeHtml(review.text)}</p><strong>- ${escapeHtml(review.name)}</strong><small>${new Date(review.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</small>${remoteAdminNote}${remove}</article>`;
 }
 
 function renderReviewLists() {
@@ -475,6 +617,10 @@ function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text;
   return div.innerHTML;
+}
+
+function escapeAttribute(text) {
+  return escapeHtml(text).replace(/"/g, "&quot;");
 }
 
 function readFileAsDataUrl(file, max = 760, quality = 0.72) {
@@ -768,7 +914,7 @@ async function handleReviewSubmit(form) {
   const photo = photoFile ? await readFileAsDataUrl(photoFile, 760, 0.72) : "";
   const emailPhoto = photoFile ? await readFileAsDataUrl(photoFile, 220, 0.42) : "";
   const emailReview = {
-    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+    id: uniqueId(),
     name: String(formData.get("name")).trim(),
     rating: Number(formData.get("rating")),
     text: String(formData.get("review")).trim(),
@@ -777,19 +923,24 @@ async function handleReviewSubmit(form) {
     photoName: photoFile?.name || "",
     emailPhoto
   };
+  const review = { ...emailReview, photo };
   try {
+    if (hasSupabaseConfig() && photo) {
+      review.photoUrl = await uploadReviewPhoto(review, photo);
+      review.photo = review.photoUrl || photo;
+      emailReview.photoUrl = review.photoUrl;
+    }
     try {
       await EmailService.send("review", emailReview);
     } catch (error) {
       if (!emailPhoto) throw error;
       await EmailService.send("review", {
-        ...emailReview,
-        emailPhoto: "",
-        photoSendNote: "A photo was uploaded, but EmailJS rejected the email preview. The review was still submitted and the photo remains visible on the site."
+          ...emailReview,
+          emailPhoto: "",
+          photoSendNote: "A photo was uploaded, but EmailJS rejected the email preview. The review was still submitted and the photo remains visible on the site."
       });
     }
-    const review = { ...emailReview, photo };
-    saveReview(review);
+    await saveReviewOnline(review, photo);
     formSuccess(form, "Thank you for reviewing Jake's Bakes. Your review has been received.");
     form.reset();
     characterCountersInit();
@@ -985,6 +1136,10 @@ document.addEventListener("DOMContentLoaded", () => {
   backToTopInit();
   searchInit();
   renderReviewLists();
+  loadRemoteReviews().catch(() => {
+    remoteReviews = null;
+    renderReviewLists();
+  });
   updateCartBadges();
   seoInit();
   document.addEventListener("click", (event) => {
