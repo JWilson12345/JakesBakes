@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reviews | Jake's Bakes</title>
+    <meta name="description" content="Read and leave customer reviews for Jake's Bakes brown-butter Biscoff cookies.">
+    <meta property="og:title" content="Reviews | Jake's Bakes">
+    <meta property="og:description" content="Read and leave customer reviews for Jake's Bakes brown-butter Biscoff cookies.">
+    <link rel="stylesheet" href="assets/css/styles.css?v=20260719-footer-cart">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div data-site-header></div>
+    <main id="main">
+      <section class="section">
+        <div class="container reviews-page">
+          <div class="review-admin-panel" data-review-admin-panel hidden>
+            <form class="review-code-form" data-review-code-form>
+              <div data-review-code-message class="error-summary" aria-live="polite"></div>
+              <label>Manager code
+                <input name="reviewCode" inputmode="numeric" autocomplete="off" required>
+              </label>
+              <button class="button" type="submit">Unlock</button>
+            </form>
+          </div>
+
+          <div class="stack">
+            <p class="eyebrow">Reviews</p>
+            <h1>Customer reviews.</h1>
+            <p class="lead">Share how your box tasted after collection, or read what other customers thought.</p>
+          </div>
+
+          <section class="review-overview" aria-label="Review summary">
+            <div class="review-score-card">
+              <div class="rating-large" data-rating-summary aria-label="No customer reviews yet"></div>
+              <p>Based on customer reviews submitted through this site.</p>
+            </div>
+            <div class="review-breakdown" data-rating-breakdown></div>
+          </section>
+
+          <section class="review-compose">
+            <form class="card pad" data-review-form enctype="multipart/form-data" novalidate>
+              <h2>Leave a review</h2>
+              <div data-error-summary class="error-summary" aria-live="polite"></div>
+
+              <label>Your name
+                <input name="name" required autocomplete="name">
+              </label>
+
+              <fieldset class="rating-picker">
+                <legend>Star rating</legend>
+                <div class="star-choice" role="radiogroup" aria-label="Star rating">
+                  <label><input type="radio" name="rating" value="1" required><span>&#9733;</span><small>1</small></label>
+                  <label><input type="radio" name="rating" value="2" required><span>&#9733;</span><small>2</small></label>
+                  <label><input type="radio" name="rating" value="3" required><span>&#9733;</span><small>3</small></label>
+                  <label><input type="radio" name="rating" value="4" required><span>&#9733;</span><small>4</small></label>
+                  <label><input type="radio" name="rating" value="5" required><span>&#9733;</span><small>5</small></label>
+                </div>
+                <p class="rating-choice-text" data-rating-choice-text>Choose a rating</p>
+              </fieldset>
+
+              <label>Your review
+                <textarea name="review" required maxlength="600" data-count="review"></textarea>
+              </label>
+              <small data-count-output="review"></small>
+
+              <label>Photo, optional
+                <input type="file" name="photo" accept="image/*">
+              </label>
+
+              <p>Reviews are sent to Jake before appearing on the site.</p>
+              <button class="button" type="submit">Submit review</button>
+            </form>
+          </section>
+
+          <section class="stack">
+            <div class="cluster" style="justify-content:space-between">
+              <h2>Customer feedback</h2>
+              <div class="rating" data-rating-summary aria-label="No customer reviews yet"></div>
+            </div>
+            <div class="grid three" data-review-list data-review-admin-list></div>
+          </section>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <div data-cart-drawer aria-hidden="true"></div>
+    <script src="assets/js/config.js?v=20260719-royale"></script>
+    <script src="assets/js/site.js?v=20260719-footer-cart"></script>
+  </body>
+</html>
