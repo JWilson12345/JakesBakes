@@ -26,6 +26,12 @@ window.STORE_CONFIG = {
     publicKey: "iPjziLz6-ui5TluiZ",
     toEmail: "jakesbakesuk@outlook.com"
   },
+  supabase: {
+    url: "https://gfidxrmlozguremdhrqd.supabase.co",
+    anonKey: "sb_publishable_S6fsODFtHSPhCg--XdRRuQ_03XHymSi",
+    reviewsTable: "reviews",
+    reviewPhotosBucket: "review-photos"
+  },
   useEmailOutboxFallback: false,
   collectionSlots: {
     startTime: "4:00",
