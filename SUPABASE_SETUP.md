@@ -108,4 +108,77 @@ For live Supabase reviews:
 4. Delete that row.
 5. If the review had a photo, go to **Storage > review-photos** and delete the matching folder.
 
-The hidden `1234` review manager is still useful for old local test reviews, but live published reviews should be managed in Supabase.
+The hidden `1234` review manager is still useful for old local test reviews. Use the admin controls below if you want to remove live reviews from the website.
+
+## Admin controls setup
+
+Run this SQL if you want the website admin page to open and close preorders across every device, and remove live reviews from the site.
+
+```sql
+create table if not exists public.site_settings (
+  key text primary key,
+  value text not null,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.site_settings enable row level security;
+
+insert into public.site_settings (key, value)
+values ('preorder_state', 'closed')
+on conflict (key) do update set value = excluded.value, updated_at = now();
+
+drop policy if exists "Anyone can read site settings" on public.site_settings;
+create policy "Anyone can read site settings"
+on public.site_settings
+for select
+to anon
+using (true);
+
+create or replace function public.admin_set_preorder_state(next_state text, admin_code text)
+returns public.site_settings
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  saved_setting public.site_settings;
+begin
+  if admin_code <> '1234' then
+    raise exception 'Invalid admin code';
+  end if;
+
+  if next_state not in ('upcoming', 'open', 'low', 'soldout', 'closed', 'preparing') then
+    raise exception 'Invalid preorder state';
+  end if;
+
+  insert into public.site_settings (key, value)
+  values ('preorder_state', next_state)
+  on conflict (key) do update set value = excluded.value, updated_at = now()
+  returning * into saved_setting;
+
+  return saved_setting;
+end;
+$$;
+
+grant execute on function public.admin_set_preorder_state(text, text) to anon;
+
+create or replace function public.admin_delete_review(review_id text, admin_code text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if admin_code <> '1234' then
+    raise exception 'Invalid admin code';
+  end if;
+
+  delete from public.reviews
+  where id = review_id;
+end;
+$$;
+
+grant execute on function public.admin_delete_review(text, text) to anon;
+```
+
+The website admin page is `admin.html`. It uses the same code, `1234`.
