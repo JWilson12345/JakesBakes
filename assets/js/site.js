@@ -1084,6 +1084,16 @@ function searchInit() {
   render();
 }
 
+function shopPageScrollInit() {
+  if (!location.pathname.endsWith("/shop.html") && !location.pathname.endsWith("shop.html")) return;
+  if (location.hash) return;
+  const reset = () => {
+    if (window.scrollY > 0 && window.scrollY < 420) window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  };
+  requestAnimationFrame(reset);
+  window.addEventListener("pageshow", reset, { once: true });
+}
+
 function seoInit() {
   const canonical = document.createElement("link");
   canonical.rel = "canonical";
@@ -1135,6 +1145,7 @@ document.addEventListener("DOMContentLoaded", () => {
   orderConfirmationInit();
   backToTopInit();
   searchInit();
+  shopPageScrollInit();
   renderReviewLists();
   loadRemoteReviews().catch(() => {
     remoteReviews = null;
