@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Website Admin | Jake's Bakes</title>
+    <meta name="description" content="Jake's Bakes website admin tools.">
+    <meta property="og:title" content="Website Admin | Jake's Bakes">
+    <meta property="og:description" content="Jake's Bakes website admin tools.">
+    <link rel="stylesheet" href="assets/css/styles.css?v=20260721-admin-controls">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div data-site-header></div>
+    <main id="main">
+      <section class="section">
+        <div class="container admin-page stack">
+          <div class="stack">
+            <p class="eyebrow">Admin</p>
+            <h1>Website admin.</h1>
+            <p class="lead">Control preorder availability and remove reviews from the live site.</p>
+          </div>
+
+          <form class="card pad admin-login" data-admin-login novalidate>
+            <h2>Unlock admin tools</h2>
+            <div data-admin-login-message class="error-summary" aria-live="polite"></div>
+            <label>Admin code
+              <input name="adminCode" inputmode="numeric" autocomplete="off" required>
+            </label>
+            <button class="button" type="submit">Unlock</button>
+          </form>
+
+          <div class="admin-panel stack" data-admin-panel hidden>
+            <section class="card pad stack">
+              <div class="cluster" style="justify-content:space-between">
+                <div>
+                  <h2>Preorders</h2>
+                  <p>Current state: <strong data-admin-current-state>Loading...</strong></p>
+                </div>
+                <button class="button secondary" type="button" data-admin-refresh>Refresh</button>
+              </div>
+              <div data-admin-message class="error-summary" aria-live="polite"></div>
+              <div class="admin-state-grid" aria-label="Preorder state controls">
+                <button class="button secondary" type="button" data-admin-state="open">Open preorders</button>
+                <button class="button secondary" type="button" data-admin-state="low">Low stock</button>
+                <button class="button secondary" type="button" data-admin-state="soldout">Sold out</button>
+                <button class="button secondary" type="button" data-admin-state="closed">Close preorders</button>
+                <button class="button secondary" type="button" data-admin-state="upcoming">Upcoming</button>
+                <button class="button secondary" type="button" data-admin-state="preparing">Preparing</button>
+              </div>
+            </section>
+
+            <section class="card pad stack">
+              <div class="cluster" style="justify-content:space-between">
+                <div>
+                  <h2>Reviews</h2>
+                  <p>Remove customer reviews from the live review database.</p>
+                </div>
+                <a class="button secondary" href="reviews.html">View reviews page</a>
+              </div>
+              <div class="admin-review-list" data-admin-review-list></div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <div data-cart-drawer aria-hidden="true"></div>
+    <script src="assets/js/config.js?v=20260721-admin-controls"></script>
+    <script src="assets/js/site.js?v=20260721-admin-controls"></script>
+  </body>
+</html>
