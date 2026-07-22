@@ -1,0 +1,17 @@
+{
+  "name": "Jake's Bakes",
+  "short_name": "Jake's Bakes",
+  "description": "Brown butter Cookie Boxes for collection in Barnsley.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf8f3",
+  "theme_color": "#22302b",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

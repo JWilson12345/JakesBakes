@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contact | Jake's Bakes</title>
+    <meta name="description" content="Contact Jake's Bakes about cookie preorders, collection, allergens or existing orders.">
+    <meta property="og:title" content="Contact | Jake's Bakes">
+    <meta property="og:description" content="Contact Jake's Bakes about cookie preorders, collection, allergens or existing orders.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="theme-color" content="#22302b">
+    <meta property="og:image" content="https://jakesbakes.co.uk/assets/images/hero-box.webp">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://jakesbakes.co.uk/assets/images/hero-box.webp">
+
+    <link rel="stylesheet" href="assets/css/styles.css?v=20260722-ready">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div data-site-header></div>
+    <main id="main">
+      <section class="section">
+        <div class="container grid two">
+          <div class="stack">
+            <p class="eyebrow">Contact</p>
+            <h1>Get in touch.</h1>
+            <p class="lead">Jake's Bakes is a small home business. Messages are normally answered within one working day.</p>
+            <ul class="clean-list">
+              <li>Instagram: @jakesbakes</li>
+              <li>TikTok: @jakesbakes</li>
+              <li>For order questions, use the secure form.</li>
+            </ul>
+          </div>
+
+          <form class="card pad" data-contact-form novalidate>
+            <div data-error-summary class="error-summary" aria-live="polite"></div>
+            <label>Name
+              <input name="name" required autocomplete="name">
+            </label>
+            <label>Email
+              <input name="email" type="email" required autocomplete="email">
+            </label>
+            <label>Phone number, optional
+              <input name="phone" autocomplete="tel">
+            </label>
+            <label>Order number, optional
+              <input name="orderNumber">
+            </label>
+            <label>Reason for contact
+              <select name="reason" required>
+                <option value="">Choose a reason</option>
+                <option>Question before ordering</option>
+                <option>Existing order</option>
+                <option>Collection</option>
+                <option>Allergens</option>
+                <option>Feedback</option>
+                <option>Something else</option>
+              </select>
+            </label>
+            <label>Message
+              <textarea name="message" required maxlength="700" data-count="contact-message"></textarea>
+            </label>
+            <small data-count-output="contact-message"></small>
+            <p>By sending this form, you agree to be contacted about your message. Marketing messages are separate and optional.</p>
+            <button class="button" type="submit">Send message</button>
+          </form>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <div data-cart-drawer aria-hidden="true"></div>
+    <script src="assets/js/config.js?v=20260722-ready"></script>
+    <script src="assets/js/site.js?v=20260722-ready"></script>
+  </body>
+</html>

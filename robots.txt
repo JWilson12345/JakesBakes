@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /account.html
+Disallow: /cart.html
+Disallow: /order-confirmation.html
+Disallow: /search.html
+Disallow: /preorder-closed.html
+Disallow: /sold-out.html
+
+Sitemap: https://jakesbakes.co.uk/sitemap.xml
