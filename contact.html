@@ -1,0 +1,96 @@
+﻿<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contact | Jake's Bakes</title>
+    <meta name="description" content="Contact Jake's Bakes about cookie preorders, collection, allergens or existing orders.">
+    <meta property="og:title" content="Contact | Jake's Bakes">
+    <meta property="og:description" content="Contact Jake's Bakes about cookie preorders, collection, allergens or existing orders.">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="theme-color" content="#130c08">
+    <meta property="og:image" content="https://jakesbakes.co.uk/assets/images/six-box.webp">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://jakesbakes.co.uk/assets/images/six-box.webp">
+
+    <link rel="stylesheet" href="assets/css/styles.css?v=20260729-image-names">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div data-site-header>
+    <div class="announcement">This week's orders have sold out. The next drop opens Friday. <a href="signup.html">Remind me</a></div>
+    <header class="site-header">
+      <div class="header-inner">
+        <button class="mobile-menu-button" type="button" data-menu-open aria-controls="mobile-menu" aria-expanded="false">Menu</button>
+        <a class="logo" href="index.html"><strong>Jake's Bakes</strong><span>Biscoff &amp; milk chocolate cookies</span></a>
+        <nav class="desktop-nav" aria-label="Main navigation">
+          <a href="shop.html">Shop</a><a href="how-it-works.html">How It Works</a><a href="about.html">About</a><a href="reviews.html">Reviews</a><a href="faq.html">FAQs</a><a href="search.html">Search</a><a href="contact.html">Contact</a>
+        </nav>
+        <div class="desktop-actions"><a href="account.html">Account</a><button class="icon-button cart-button" type="button" data-cart-open>Cart <span class="cart-count" data-cart-count>0</span></button></div>
+        <button class="icon-button cart-button mobile-cart-button" type="button" data-cart-open aria-label="Open cart">Cart <span class="cart-count" data-cart-count>0</span></button>
+      </div>
+    </header>
+    <div class="mobile-panel" data-mobile-panel aria-hidden="true">
+      <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation">
+        <button class="mobile-menu-button" type="button" data-menu-close>Close</button>
+        <a href="shop.html">Shop</a><a href="shop.html">Pre-order now</a><a href="how-it-works.html">How It Works</a><a href="collection.html">Collection</a><a href="ingredients-allergens.html">Ingredients &amp; Allergens</a><a href="reviews.html">Reviews</a><a href="faq.html">FAQs</a><a href="search.html">Search</a><a href="contact.html">Contact</a><a href="account.html">Account</a>
+      </nav>
+    </div>
+  </div>
+    <main id="main">
+      <section class="section contact-section">
+        <div class="container contact-layout">
+          <div class="contact-copy">
+            <p class="eyebrow">Contact</p>
+            <h1>Get in touch.</h1>
+            <p class="lead">Jake's Bakes is a small home business. Messages are normally answered within one working day.</p>
+            <ul class="contact-links" aria-label="Social links and contact guidance">
+              <li><span>Instagram</span><a href="https://www.instagram.com/jakesbakesbarnsley/" rel="noopener">@jakesbakesbarnsley</a></li>
+              <li><span>TikTok</span><a href="https://www.tiktok.com/@jakes_bakes_barnsey" rel="noopener">@jakes_bakes_barnsey</a></li>
+              <li><span>YouTube</span><a href="https://www.youtube.com/@jakesbakesbarnsey" rel="noopener">@jakesbakesbarnsey</a></li>
+              <li><span>Order help</span><strong>Use the form for order, collection and allergen questions.</strong></li>
+            </ul>
+          </div>
+
+          <form class="card pad contact-form" data-contact-form novalidate>
+            <div data-error-summary class="error-summary" aria-live="polite"></div>
+            <label>Name
+              <input name="name" required autocomplete="name">
+            </label>
+            <label>Email
+              <input name="email" type="email" required autocomplete="email">
+            </label>
+            <label>Phone number, optional
+              <input name="phone" autocomplete="tel">
+            </label>
+            <label>Order number, optional
+              <input name="orderNumber">
+            </label>
+            <label>Reason for contact
+              <select name="reason" required>
+                <option value="">Choose a reason</option>
+                <option>Question before ordering</option>
+                <option>Existing order</option>
+                <option>Collection</option>
+                <option>Allergens</option>
+                <option>Feedback</option>
+                <option>Something else</option>
+              </select>
+            </label>
+            <label>Message
+              <textarea name="message" required maxlength="700" data-count="contact-message"></textarea>
+            </label>
+            <small data-count-output="contact-message"></small>
+            <p>By sending this form, you agree to be contacted about your message. Marketing messages are separate and optional.</p>
+            <button class="button" type="submit">Send message</button>
+          </form>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <div data-cart-drawer aria-hidden="true"></div>
+    <script src="assets/js/config.js?v=20260729-image-names"></script>
+    <script src="assets/js/site.js?v=20260729-image-names"></script>
+  </body>
+</html>
