@@ -1,0 +1,52 @@
+﻿window.STORE_CONFIG = {
+  brandName: "Jake's Bakes",
+  tagline: "Freshly baked every Friday. Collection only, Barnsley.",
+  location: "Barnsley, South Yorkshire",
+  logoLine: "Small-batch Friday bakes",
+  productName: "The Biscoff Royale",
+  plainProductName: "",
+  fourPackPrice: 11.99,
+  sixPackPrice: 15.99,
+  fourCookieWeightGrams: 80,
+  sixCookieWeightGrams: 60,
+  weeklyBoxLimit: 12,
+  preorderDurationHours: 48,
+  collectionAddress: "Central Barnsley collection point",
+  collectionWindow: "4:00-6:00pm",
+  collectionDate: "Friday after your preorder",
+  contactLabel: "Use the contact form for order questions",
+  instagramUrl: "https://www.instagram.com/jakesbakesbarnsley/",
+  instagramHandle: "@jakesbakesbarnsley",
+  tiktokUrl: "https://www.tiktok.com/@jakes_bakes_barnsey",
+  tiktokHandle: "@jakes_bakes_barnsey",
+  youtubeUrl: "https://www.youtube.com/@jakesbakesbarnsey",
+  youtubeHandle: "@jakesbakesbarnsey",
+  responseTime: "one working day",
+  preorderState: "closed",
+  inventoryRemaining: 18,
+  emailEndpoint: "",
+  emailJs: {
+    serviceId: "service_637q56m",
+    templateId: "template_9hu2bkl",
+    publicKey: "iPjziLz6-ui5TluiZ",
+    toEmail: "jakesbakesuk@outlook.com"
+  },
+  supabase: {
+    url: "https://gfidxrmlozguremdhrqd.supabase.co",
+    anonKey: "sb_publishable_S6fsODFtHSPhCg--XdRRuQ_03XHymSi",
+    reviewsTable: "reviews",
+    productReviewColumns: false,
+    siteSettingsTable: "site_settings",
+    marketingTable: "marketing_signups",
+    reviewPhotosBucket: "review-photos"
+  },
+  useEmailOutboxFallback: false,
+  collectionSlots: {
+    startTime: "4:00",
+    endTime: "6:00",
+    slotDurationMinutes: 25,
+    maxBoxesPerSlot: 5,
+    disabledSlots: ["5:15-5:40"],
+    slots: ["4:00-4:25", "4:25-4:50", "4:50-5:15", "5:15-5:40", "5:40-6:00"]
+  }
+};
